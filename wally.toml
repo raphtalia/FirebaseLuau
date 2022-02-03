@@ -4,3 +4,6 @@ name = "raphtalia/firebase-luau"
 realm = "shared"
 registry = "https://github.com/UpliftGames/wally-index"
 version = "1.0.0"
+
+[dependencies]
+Promise = "evaera/promise@3.2.1"
