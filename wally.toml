@@ -1,0 +1,6 @@
+[package]
+description = "firebase-luau"
+name = "raphtalia/firebase-luau"
+realm = "shared"
+registry = "https://github.com/UpliftGames/wally-index"
+version = "1.0.0"

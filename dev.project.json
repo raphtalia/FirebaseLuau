@@ -1,0 +1,12 @@
+{
+  "name": "FirebaseLuau - Dev",
+  "tree": {
+    "$className": "DataModel",
+
+    "ServerStorage": {
+      "$className": "ServerStorage",
+
+      "FirebaseLuau": { "$path": "." }
+    }
+  }
+}
