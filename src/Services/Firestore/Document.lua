@@ -22,7 +22,7 @@ end
 
 function DOCUMENT_METATABLE:Read()
     return Promise.new(function(resolve)
-        local doc = self.App._http:GET("Firestore", self.App.ProjectId, self.Path):expect()
+        local doc = self.App._http:GET("Firestore", self.Path):expect()
 
         -- TODO: Parse data into Lua table
         self.Cache.Data = doc.fields

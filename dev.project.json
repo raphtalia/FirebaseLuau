@@ -7,6 +7,14 @@
       "$className": "ServerStorage",
 
       "FirebaseLuau": { "$path": "." }
+    },
+
+    "HttpService": {
+      "$className": "HttpService",
+
+      "$properties": {
+        "HttpEnabled": true
+      }
     }
   }
 }
