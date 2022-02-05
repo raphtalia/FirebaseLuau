@@ -6,18 +6,29 @@ local Document = {}
 local DOCUMENT_METATABLE = {}
 DOCUMENT_METATABLE.__index = DOCUMENT_METATABLE
 
-function Document.new(app, path)
+function Document.new(app, pathOrDoc)
     local self = {}
 
     self.App = app
-    self.Path = path
-
-    local pathParams = path:split("/")
-    self.DocumentId = pathParams[#pathParams]
-
     self.Cache = {}
-    self.LastRead = nil
     self.LastWrite = nil
+
+    local pathOrDocType = type(pathOrDoc)
+    if pathOrDocType == "string" then
+        local path = pathOrDoc
+
+        self.Path = path
+        self.LastRead = nil
+    elseif pathOrDocType == "table" then
+        local doc = pathOrDoc
+
+        self.Path = doc.name
+        self.Cache.Data = doc.fields
+        self.LastRead = DateTime.now()
+    end
+
+    local pathParams = self.Path:split("/")
+    self.DocumentId = pathParams[#pathParams]
 
     return setmetatable(self, DOCUMENT_METATABLE)
 end
