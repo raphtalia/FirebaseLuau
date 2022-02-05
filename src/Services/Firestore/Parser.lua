@@ -1,5 +1,7 @@
 local HttpService = game:GetService("HttpService")
 
+local TableUtils = require(script.Parent.Parent.TableUtils)
+
 local Parser = {}
 
 local RBX_TO_FIRESTORE_TYPE_MAP = {
@@ -41,26 +43,6 @@ function Parser.toRbx(data)
 end
 
 function Parser.toFirestore(data)
-    local function getTableType(table)
-        if next(table) == nil then return "Empty" end
-        local isArray = true
-        local isDictionary = true
-        for k, _ in next, table do
-            if typeof(k) == "number" and k%1 == 0 and k > 0 then
-                isDictionary = false
-            else
-                isArray = false
-            end
-        end
-        if isArray then
-            return "Array"
-        elseif isDictionary then
-            return "Dictionary"
-        else
-            return "Mixed"
-        end
-    end
-
     local function format(table, newData)
         newData = newData or {fields = {}}
         local fields = newData.fields or newData.values
@@ -75,8 +57,7 @@ function Parser.toFirestore(data)
             elseif typeof(v) == "DateTime" then
                 fields[k] = {timestampValue = v:ToIsoDate()}
             elseif type(v) == "table" then
-                local typeTable = getTableType(v)
-                if typeTable == "Array" or typeTable == "Empty" then
+                if TableUtils.isArray(table) or TableUtils.isEmpty(table) then
                     fields[k] = {arrayValue = format(v, {values = {}})}
                 else
                     fields[k] = {mapValue = format(v)}

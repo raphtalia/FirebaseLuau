@@ -1,5 +1,6 @@
 local Promise = require(script.Parent.Parent.Parent.Packages.Promise)
 local Parser = require(script.Parent.Parser)
+local TableUtils = require(script.Parent.Parent.TableUtils)
 
 local Document = {}
 local DOCUMENT_METATABLE = {}
@@ -26,6 +27,7 @@ function DOCUMENT_METATABLE:Read()
         local doc = self.App._http:GET("Firestore", self.Path):expect()
         local parsedData = Parser.toRbx(doc.fields)
 
+        self.Cache.Data = parsedData
         self.Cache.CreateTime = DateTime.fromIsoDate(doc.createTime)
         self.Cache.UpdateTime = DateTime.fromIsoDate(doc.updateTime)
         self.LastRead = DateTime.now()
@@ -42,15 +44,29 @@ function DOCUMENT_METATABLE:Write(data)
         self.Cache.UpdateTime = DateTime.fromIsoDate(doc.updateTime)
         self.LastWrite = DateTime.now()
 
-        resolve(data)
+        resolve(Parser.toRbx(doc.fields))
     end)
 end
 
-function DOCUMENT_METATABLE:Update()
-    
+function DOCUMENT_METATABLE:Update(data)
+    return Promise.new(function(resolve)
+        local doc = self.App._http:PATCH("Firestore", self.Path, TableUtils.map(TableUtils.keys(data), function(value)
+            return "updateMask.fieldPaths=".. value
+        end), Parser.toFirestore(data)):expect()
+
+        self.Cache.CreateTime = DateTime.fromIsoDate(doc.createTime)
+        self.Cache.UpdateTime = DateTime.fromIsoDate(doc.updateTime)
+        self.LastWrite = DateTime.now()
+
+        resolve(Parser.toRbx(doc.fields))
+    end)
 end
 
 function DOCUMENT_METATABLE:Delete()
+    
+end
+
+function DOCUMENT_METATABLE:ListCollections()
     
 end
 

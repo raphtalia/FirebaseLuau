@@ -30,7 +30,11 @@ local function formatUrl(baseUrl, path, queries)
         local queryStrings = {}
 
         for key, value in pairs(queries) do
-            table.insert(queryStrings, ("%s=%s"):format(key, value))
+            if type(key) == "number" then
+                table.insert(queryStrings, value)
+            else
+                table.insert(queryStrings, ("%s=%s"):format(key, value))
+            end
         end
 
         if #queryStrings > 0 then
