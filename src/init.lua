@@ -11,16 +11,15 @@ function FirebaseLuau.init(appParams)
 
     self.ProjectId = appParams.ProjectId
     self.APIKey = appParams.APIKey
+    self.Email = appParams.Email
+    self.Password = appParams.Password
 
     self._http = Http.new(self)
     self._authentication = Authentication.new(self)
     self.Firestore = Firestore.new(self)
 
-    local email = appParams.Email
-    local password = appParams.Password
-
-    if email and password then
-        self._auth = self._authentication:SignInWithEmailAndPassword(email, password):expect()
+    if self.Email and self.Password then
+        self._auth = self._authentication:SignInWithEmailAndPassword(self.Email, self.Password):expect()
     end
 
     return setmetatable(self, FIREBASELUAU_METATABLE)

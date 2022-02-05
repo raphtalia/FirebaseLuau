@@ -55,6 +55,11 @@ local function requestAsync(app, requestParams)
     end
 
     local response = HttpService:RequestAsync(requestParams)
+    if response.StatusCode == 401 then
+        app._auth = app._authentication:SignInWithEmailAndPassword(app.Email, app.Password):expect()
+        requestParams.Headers.Authorization = "Bearer ".. app._auth.IdToken
+        response = HttpService:RequestAsync(requestParams)
+    end
     if response.Headers["content-type"]:find("application/json") then
         response.Body = HttpService:JSONDecode(response.Body)
     end
