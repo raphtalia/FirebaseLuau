@@ -1,7 +1,7 @@
 [package]
-description = "firebase-luau"
-name = "raphtalia/firebase-luau"
-realm = "shared"
+description = "Roblox Firebase API"
+name = "raphtalia/firebase"
+realm = "server"
 registry = "https://github.com/UpliftGames/wally-index"
 version = "1.0.0"
 
