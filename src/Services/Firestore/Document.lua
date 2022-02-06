@@ -35,20 +35,24 @@ end
 
 function DOCUMENT_METATABLE:Read()
     return Promise.new(function(resolve)
-        local doc = self.App._http:GET("Firestore", self.Path):expect()
+        local status, doc = self.App._http:GET("Firestore", self.Path):await()
+        
+        if status and doc then
+            local parsedData
+            if doc.fields then
+                -- Empty documents do not have a fields property
+                parsedData = Parser.toRbx(doc.fields)
+                self.Cache.Data = parsedData
+            end
 
-        local parsedData
-        if doc.fields then
-            -- Empty documents do not have a fields property
-            parsedData = Parser.toRbx(doc.fields)
-            self.Cache.Data = parsedData
+            self.Cache.CreateTime = DateTime.fromIsoDate(doc.createTime)
+            self.Cache.UpdateTime = DateTime.fromIsoDate(doc.updateTime)
+            self.LastRead = DateTime.now()
+
+            resolve(parsedData)
+        else
+            resolve(nil) -- Document does not exist
         end
-
-        self.Cache.CreateTime = DateTime.fromIsoDate(doc.createTime)
-        self.Cache.UpdateTime = DateTime.fromIsoDate(doc.updateTime)
-        self.LastRead = DateTime.now()
-
-        resolve(parsedData)
     end)
 end
 
@@ -79,7 +83,11 @@ function DOCUMENT_METATABLE:Update(data)
 end
 
 function DOCUMENT_METATABLE:Delete()
-    
+    return Promise.new(function(resolve)
+        self.App._http:DELETE("Firestore", self.Path):expect()
+
+        resolve()
+    end)
 end
 
 return Document

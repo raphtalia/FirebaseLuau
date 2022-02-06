@@ -4,17 +4,6 @@ local TableUtils = require(script.Parent.Parent.TableUtils)
 
 local Parser = {}
 
-local RBX_TO_FIRESTORE_TYPE_MAP = {
-    string = "stringValue";
-    number = "integerValue";
-}
-
-local FIRESTORE_TO_RBX_TYPE_MAP = {
-    stringValue = "string";
-    integerValue = "number";
-    booleanValue = "boolean";
-}
-
 function Parser.toRbx(data)
     data = (type(data) == "table" and data or HttpService:JSONDecode(data))
     local function format(table)
