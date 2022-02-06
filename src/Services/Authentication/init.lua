@@ -14,24 +14,28 @@ function Authentication.new(app)
 end
 
 function AUTHENTICATION_METATABLE:SignInWithEmailAndPassword(email, password)
-    return Promise.new(function(resolve)
+    return Promise.new(function(resolve, reject)
         local app = self.App
 
-        local response = app._http:POST("IdentityToolKit", ":signInWithPassword", {
+        local status, response = app._http:POST("IdentityToolKit", ":signInWithPassword", {
             key = app.APIKey,
         }, {
             email = email,
             password = password,
             returnSecureToken = true,
-        }):expect()
+        }):await()
 
-        resolve(Auth.new(
-            app,
-            {
-                IdToken = response.idToken,
-                ExpiresIn = response.expiresIn,
-            }
-        ))
+        if status then
+            resolve(Auth.new(
+                app,
+                {
+                    IdToken = response.idToken,
+                    ExpiresIn = response.expiresIn,
+                }
+            ))
+        else
+            reject(response)
+        end
     end)
 end
 
