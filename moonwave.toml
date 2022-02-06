@@ -1,0 +1,16 @@
+title = "FirebaseLuau"
+
+gitRepoUrl = "https://github.com/raphtalia/FirebaseLuau"
+gitSourceBranch = "main"
+
+classOrder = [
+  "Firebase",
+  "FirebaseApp",
+  "Firestore",
+  "CollectionReference",
+  "DocumentReference",
+  "DocumentList",
+]
+
+[footer]
+copyright = "Copyright © 2022 raphtalia, ExentricDEV"
