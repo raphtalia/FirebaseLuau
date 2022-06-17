@@ -1,8 +1,6 @@
 {
   "name": "FirebaseLuau",
   "tree": {
-    "$path": "src",
-
-    "Packages": { "$path": "Packages" }
+    "$path": "src"
   }
 }

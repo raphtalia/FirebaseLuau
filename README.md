@@ -1,3 +1,19 @@
+<h1 align="center">
+  <br>
+  <img src="https://i.imgur.com/lmdjbmH.png" width = "230" height = "300" alt="FirebaseLuau">
+</h1>
+
+<p align="center">
+    <a href="https://github.com/raphtalia/FirebaseLuau/issues">
+    <img src="https://img.shields.io/github/issues-raw/raphtalia/FirebaseLuau"
+         alt="FirebaseLuau Issue Tracking">
+      <a href="https://github.com/raphtalia/FirebaseLuau/commits/main">
+    <img src="https://img.shields.io/github/last-commit/raphtalia/FirebaseLuau"
+         alt="FirebaseLuau Commits">
+</p>
+  
+  
+
 # FirebaseLuau
 
 Promise based library for accessing Firebase services from within Roblox. Currently this project only has support for

@@ -46,7 +46,7 @@ function Parser.toFirestore(data)
             elseif typeof(v) == "DateTime" then
                 fields[k] = {timestampValue = v:ToIsoDate()}
             elseif type(v) == "table" then
-                if TableUtils.isArray(table) or TableUtils.isEmpty(table) then
+                if TableUtils.isArray(v) or TableUtils.isEmpty(v) then
                     fields[k] = {arrayValue = format(v, {values = {}})}
                 else
                     fields[k] = {mapValue = format(v)}

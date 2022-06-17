@@ -1,6 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
-local Promise = require(script.Parent.Packages.Promise)
+local Promise = require(ReplicatedStorage.Packages.Promise)
 
 local BASE_URLs = {
     Firestore = function(app)

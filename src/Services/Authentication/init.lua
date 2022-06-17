@@ -1,4 +1,6 @@
-local Promise = require(script.Parent.Parent.Packages.Promise)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Promise = require(ReplicatedStorage.Packages.Promise)
 local Auth = require(script.Auth)
 
 local Authentication = {}

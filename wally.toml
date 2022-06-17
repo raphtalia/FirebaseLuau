@@ -1,9 +1,10 @@
 [package]
-description = "Roblox Firebase API"
 name = "raphtalia/firebase"
-realm = "server"
+description = "Roblox Firebase API"
+version = "1.0.6"
+license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
-version = "1.0.0"
+realm = "server"
 
 [dependencies]
 Promise = "evaera/promise@3.2.1"
