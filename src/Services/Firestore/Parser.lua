@@ -1,6 +1,6 @@
 local HttpService = game:GetService("HttpService")
 
-local TableUtils = require(script.Parent.Parent.TableUtils)
+local TableUtils = require(script.Parent.Parent.Parent.Util.TableUtils)
 
 local Parser = {}
 
@@ -11,6 +11,8 @@ function Parser.toRbx(data)
         for k,v in pairs(table) do
             if v.integerValue then
                 newData[k] = tonumber(v.integerValue)
+            elseif v.doubleValue then
+                newData[k] = v.doubleValue
             elseif v.stringValue then
                 newData[k] = v.stringValue
             elseif v.booleanValue ~= nil then
@@ -38,7 +40,11 @@ function Parser.toFirestore(data)
 
         for k,v in pairs(table) do
             if type(v) == "number" then
-                fields[k] = {integerValue = v}
+                if math.floor(v) == v then
+                    fields[k] = {integerValue = v}
+                else
+                    fields[k] = {doubleValue = v}
+                end
             elseif type(v) == "string" then
                 fields[k] = {stringValue = v}
             elseif type(v) == "boolean" then

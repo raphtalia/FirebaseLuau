@@ -1,52 +1,64 @@
-local Collection = require(script.Collection)
-local Document = require(script.Document)
+-- https://firebase.google.com/docs/reference/node/firebase.firestore.Firestore
 
---[=[
-    @class Firestore
-    Object tied to a FirebaseApp's Firestore service.
-]=]
-local Firestore = {}
+local CollectionReference = require(script.CollectionReference)
+local DocumentReference = require(script.DocumentReference)
+
 local FIRESTORE_METATABLE = {}
-FIRESTORE_METATABLE.__index = FIRESTORE_METATABLE
-
---[=[
-    @within Firestore
-    @private
-    Creates a `Firestore` object tied to the given FirebaseApp.
-
-    @param app FirebaseApp
-    @return Firestore
-]=]
-function Firestore.new(app)
-    local self = {}
-
-    self.App = app
-
-    return setmetatable(self, FIRESTORE_METATABLE)
+function FIRESTORE_METATABLE:__index(i)
+    if i == "App" then
+        return rawget(self, "_app")
+    else
+        return FIRESTORE_METATABLE[i] or error(i.. " is not a valid member of Firestore", 2)
+    end
+end
+function FIRESTORE_METATABLE:__newindex(i)
+    error(i.. " is not a valid member of Firestore or is unassignable", 2)
 end
 
---[=[
-    @within Firestore
-    Returns a collection reference.
+-- function FIRESTORE_METATABLE:ConnectEmulator()
 
-    @method GetCollection
-    @param path string
-    @return CollectionReference
-]=]
+-- end
+
+-- function FIRESTORE_METATABLE:DisconnectEmulator()
+
+-- end
+
 function FIRESTORE_METATABLE:GetCollection(path)
-    return Collection.new(self.App, path)
+    local cache = rawget(self, "CachedCollections")
+    local collection = cache[path]
+
+    if not collection then
+        collection = CollectionReference.new(self, path)
+        cache[path] = collection
+    end
+
+    return collection
 end
 
---[=[
-    @within Firestore
-    Returns a document reference.
+-- function FIRESTORE_METATABLE:GetCollectionGroup()
 
-    @method GetDoc
-    @param path string
-    @return DocumentReference
-]=]
+-- end
+
 function FIRESTORE_METATABLE:GetDoc(path)
-    return Document.new(self.App, path)
+    local cache = rawget(self, "CachedDocs")
+    local doc = cache[path]
+
+    if not doc then
+        doc = DocumentReference.new(self, path)
+        cache[path] = doc
+    end
+
+    return doc
 end
 
-return Firestore
+-- function FIRESTORE_METATABLE:RunQuery()
+
+-- end
+
+return function(app)
+    return setmetatable({
+        CachedCollections = {},
+        CachedDocs = {},
+        _app = app,
+    }, FIRESTORE_METATABLE)
+end

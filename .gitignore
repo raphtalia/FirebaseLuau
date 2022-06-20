@@ -5,7 +5,7 @@
 *.DS_Store
 
 # Ignore Documentation build directory
-/build
+build
 
 # Ignore packages
 /Packages
@@ -13,5 +13,7 @@
 /DevPackages
 
 # Ignore Node modules
-/dist
-/node_modules
+node_modules
+
+roblox.toml
+.env.json

@@ -1,10 +1,15 @@
 [package]
-name = "raphtalia/firebase"
 description = "Roblox Firebase API"
-version = "1.0.6"
+exclude = ["*"]
+include = ["src", "src/*", "default.project.json", "wally.toml", "LICENSE"]
 license = "MIT"
-registry = "https://github.com/UpliftGames/wally-index"
+name = "raphtalia/firebase"
 realm = "server"
+registry = "https://github.com/UpliftGames/wally-index"
+version = "1.0.6"
 
 [dependencies]
+EnumList = "sleitnick/enum-list@2.0.0"
 Promise = "evaera/promise@3.2.1"
+TestEZ = "roblox/testez@0.4.1"
+t = "osyrisrblx/t@3.0.0"

@@ -1,28 +1,20 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
-local Promise = require(ReplicatedStorage.Packages.Promise)
+local Promise = require(script.Parent.Parent.Parent.Promise)
 
 local BASE_URLs = {
     Firestore = function(app)
-        return ("https://firestore.googleapis.com/v1/projects/%s/databases/(default)/documents/"):format(app.ProjectId)
+        return ("https://firestore.googleapis.com/v1/projects/%s/databases/(default)/documents"):format(app.Options.ProjectId)
     end,
     IdentityToolKit = function()
         return "https://identitytoolkit.googleapis.com/v1/accounts"
     end,
+    SecureToken = function()
+        return "https://securetoken.googleapis.com/v1"
+    end,
 }
 
-local Http = {}
-local HTTP_METATABLE = {}
-HTTP_METATABLE.__index = HTTP_METATABLE
-
-function Http.new(app)
-    local self = {}
-
-    self.App = app
-
-    return setmetatable(self, HTTP_METATABLE)
-end
+local GoogleApis = {}
 
 local function formatUrl(baseUrl, path, queries)
     local url = baseUrl.. path
@@ -46,12 +38,8 @@ local function formatUrl(baseUrl, path, queries)
     return url
 end
 
-local function requestAsync(app, requestParams)
+local function requestAsync(requestParams)
     requestParams.Headers = requestParams.Headers or {}
-
-    if app._auth then
-        requestParams.Headers.Authorization = "Bearer ".. app._auth.IdToken
-    end
 
     local requestBody = requestParams.Body
     if requestBody and type(requestBody) == "table" then
@@ -59,12 +47,8 @@ local function requestAsync(app, requestParams)
         requestParams.Body = HttpService:JSONEncode(requestBody)
     end
 
+    print(requestParams)
     local response = HttpService:RequestAsync(requestParams)
-    if response.StatusCode == 401 then
-        app._auth = app._authentication:SignInWithEmailAndPassword(app.Email, app.Password):expect()
-        requestParams.Headers.Authorization = "Bearer ".. app._auth.IdToken
-        response = HttpService:RequestAsync(requestParams)
-    end
     if response.Headers["content-type"]:find("application/json") then
         response.Body = HttpService:JSONDecode(response.Body)
     end
@@ -72,13 +56,12 @@ local function requestAsync(app, requestParams)
     return response
 end
 
-function HTTP_METATABLE:GET(serviceName, path, queries)
+function GoogleApis.get(options)
     return Promise.new(function(resolve, reject)
-        local app = self.App
-
-        local response = requestAsync(app, {
-            Url = formatUrl(BASE_URLs[serviceName](app), path, queries),
+        local response = requestAsync({
+            Url = formatUrl(BASE_URLs[options.Service](options.App), options.Path, options.Params),
             Method = "GET",
+            Headers = options.Headers,
         })
 
         if response.StatusCode == 200 then
@@ -89,14 +72,13 @@ function HTTP_METATABLE:GET(serviceName, path, queries)
     end)
 end
 
-function HTTP_METATABLE:POST(serviceName, path, queries, body)
+function GoogleApis.post(options)
     return Promise.new(function(resolve, reject)
-        local app = self.App
-
-        local response = requestAsync(self.App, {
-            Url = formatUrl(BASE_URLs[serviceName](app), path, queries),
+        local response = requestAsync({
+            Url = formatUrl(BASE_URLs[options.Service](options.App), options.Path, options.Params),
             Method = "POST",
-            Body = body,
+            Headers = options.Headers,
+            Body = options.Body,
         })
 
         if response.StatusCode == 200 then
@@ -107,14 +89,13 @@ function HTTP_METATABLE:POST(serviceName, path, queries, body)
     end)
 end
 
-function HTTP_METATABLE:DELETE(serviceName, path, queries, body)
+function GoogleApis.delete(options)
     return Promise.new(function(resolve, reject)
-        local app = self.App
-
-        local response = requestAsync(self.App, {
-            Url = formatUrl(BASE_URLs[serviceName](app), path, queries),
+        local response = requestAsync({
+            Url = formatUrl(BASE_URLs[options.Service](options.App), options.Path, options.Params),
             Method = "DELETE",
-            Body = body,
+            Headers = options.Headers,
+            Body = options.Body,
         })
 
         if response.StatusCode == 200 then
@@ -125,14 +106,13 @@ function HTTP_METATABLE:DELETE(serviceName, path, queries, body)
     end)
 end
 
-function HTTP_METATABLE:PATCH(serviceName, path, queries, body)
+function GoogleApis.patch(options)
     return Promise.new(function(resolve, reject)
-        local app = self.App
-
-        local response = requestAsync(self.App, {
-            Url = formatUrl(BASE_URLs[serviceName](app), path, queries),
+        local response = requestAsync({
+            Url = formatUrl(BASE_URLs[options.Service](options.App), options.Path, options.Params),
             Method = "PATCH",
-            Body = body,
+            Headers = options.Headers,
+            Body = options.Body,
         })
 
         if response.StatusCode == 200 then
@@ -143,4 +123,4 @@ function HTTP_METATABLE:PATCH(serviceName, path, queries, body)
     end)
 end
 
-return Http
+return GoogleApis

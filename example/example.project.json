@@ -1,5 +1,5 @@
 {
-  "name": "FirebaseLuau - Dev",
+  "name": "FirebaseLuau - Example",
   "tree": {
     "$className": "DataModel",
 
@@ -7,15 +7,16 @@
       "$className": "ReplicatedStorage",
 
       "Packages": {
-        "$path": "Packages",
-        "FirebaseLuau": { "$path": "." }
+        "$path": "../Packages",
+        "FirebaseLuau": { "$path": ".." }
       }
     },
 
     "ServerScriptService": {
       "$className": "ServerScriptService",
 
-      "tests": { "$path": "tests" }
+      "Server": { "$path": "example.server.lua" },
+      ".env": { "$path": ".env.json" }
     }
   }
 }

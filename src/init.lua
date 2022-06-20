@@ -1,80 +1,92 @@
-local Http = require(script.Http)
+-- https://firebase.google.com/docs/reference/node/firebase
+-- https://firebase.google.com/docs/reference/node/firebase.app.App
+
 local Authentication = require(script.Services.Authentication)
 local Firestore = require(script.Services.Firestore)
+local Functions = require(script.Services.Functions)
+local Realtime = require(script.Services.Realtime)
+local Storage = require(script.Services.Storage)
 
---[=[
-    @class Firebase
-    Main Firebase library.
-]=]
-local FirebaseLuau = {}
---[=[
-    @class FirebaseApp
-    An object tied to a specific Firebase project and used to access Firebase services such as Firestore.
-]=]
-local FIREBASELUAU_METATABLE = {}
-FIREBASELUAU_METATABLE.__index = FIREBASELUAU_METATABLE
-
---[=[
-    @within Firebase
-    Creates a `FirebaseApp` object with the given ProjectId, APIKey, Email and password.
-
-    @param appParams { ProjectId: string, APIKey: string, Email: string, Password: string }
-    @return FirebaseApp
-]=]
-function FirebaseLuau.init(appParams)
-    local self = {}
-
-    --[=[
-        @within FirebaseApp
-        @prop ProjectId string
-        Project ID of the Firebase project.
-    ]=]
-    self.ProjectId = appParams.ProjectId
-    --[=[
-        @within FirebaseApp
-        @prop APIKey string
-        API key of the Firebase project.
-    ]=]
-    self.APIKey = appParams.APIKey
-    --[=[
-        @within FirebaseApp
-        @prop Email string
-        Email of the Firebase user.
-    ]=]
-    self.Email = appParams.Email
-    --[=[
-        @within FirebaseApp
-        @prop Password string
-        Password of the Firebase user.
-    ]=]
-    self.Password = appParams.Password
-
-    --[=[
-        @within FirebaseApp
-        @private
-        @prop _http Http
-        Http object used to communicate with the Firebase API.
-    ]=]
-    self._http = Http.new(self)
-    --[=[
-        @within FirebaseApp
-        @private
-        @prop _authentication Authentication
-        Authentication object used to authenticate with the Firebase API.
-    ]=]
-    self._authentication = Authentication.new(self)
-    --[=[
-        @within FirebaseApp
-        @prop Firestore Firestore
-        Firestore object used to access the Firestore API.
-    ]=]
-    self.Firestore = Firestore.new(self)
-
-    if self.Email and self.Password then
-        self._auth = self._authentication:SignInWithEmailAndPassword(self.Email, self.Password):expect()
+local FirebaseApp = {}
+local FIREBASE_APP_METATABLE = {}
+function FIREBASE_APP_METATABLE:__index(i)
+    if i == "Options" then
+        return rawget(self, "_options")
+    else
+        return FIREBASE_APP_METATABLE[i] or error(i.. " is not a valid member of FirebaseApp", 2)
     end
-
-    return setmetatable(self, FIREBASELUAU_METATABLE)
+end
+function FIREBASE_APP_METATABLE:__newindex(i)
+    error(i.. " is not a valid member of FirebaseApp or is unassignable", 2)
 end
 
-return FirebaseLuau
+function FirebaseApp.initializeApp(options)
+    return setmetatable({
+        -- Auth = nil,
+        -- Firestore = nil,
+        -- Functions = nil,
+        -- Realtime = nil,
+        -- Storage = nil,
+
+        _options = {
+            ApiKey = options.ApiKey,
+            ProjectId = options.ProjectId,
+            -- AppId = options.AppId,
+            -- AuthDomain = options.AuthDomain or ("%s.firebaseapp.com"):format(options.ProjectId),
+            -- DatabaseURL = options.DatabaseURL or ("https://%s.firebaseio.com"):format(options.ProjectId),
+            -- StorageBucket = options.StorageBucket or ("%s.appspot.com"):format(options.ProjectId),
+        },
+    }, FIREBASE_APP_METATABLE)
+end
+
+function FIREBASE_APP_METATABLE:GetAuth()
+    local auth = rawget(self, "Auth")
+    if not auth then
+        auth = Authentication(self)
+        rawset(self, "Auth", auth)
+    end
+
+    return auth
+end
+
+function FIREBASE_APP_METATABLE:GetFirestore()
+    local firestore = rawget(self, "Firestore")
+    if not firestore then
+        firestore = Firestore(self)
+        rawset(self, "Firestore", firestore)
+    end
+
+    return firestore
+end
+
+function FIREBASE_APP_METATABLE:GetFunctions()
+    local functions = rawget(self, "Functions")
+    if not functions then
+        functions = Functions(self)
+        rawset(self, "Functions", functions)
+    end
+
+    return functions
+end
+
+function FIREBASE_APP_METATABLE:GetRealtime()
+    local realtime = rawget(self, "Realtime")
+    if not realtime then
+        realtime = Realtime(self)
+        rawset(self, "Realtime", realtime)
+    end
+
+    return realtime
+end
+
+function FIREBASE_APP_METATABLE:GetStorage()
+    local storage = rawget(self, "Storage")
+    if not storage then
+        storage = Storage(self)
+        rawset(self, "Storage", storage)
+    end
+
+    return storage
+end
+
+return FirebaseApp
