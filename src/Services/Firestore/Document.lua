@@ -1,6 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Promise = require(ReplicatedStorage.Packages.Promise)
+local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
 local Parser = require(script.Parent.Parser)
 local TableUtils = require(script.Parent.Parent.TableUtils)
 

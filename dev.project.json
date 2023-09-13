@@ -2,22 +2,17 @@
   "name": "FirebaseLuau - Dev",
   "tree": {
     "$className": "DataModel",
-
-    "ServerStorage": {
-      "$className": "ServerStorage",
-
-      "FirebaseLuau": { "$path": "." }
-    },
-
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-
-      "Packages": { "$path": "Packages" }
+      "Packages": {
+        "$path": "Packages",
+        "FirebaseLuau": {
+          "$path": "."
+        }
+      }
     },
-
     "HttpService": {
       "$className": "HttpService",
-
       "$properties": {
         "HttpEnabled": true
       }
