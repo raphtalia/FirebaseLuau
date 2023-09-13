@@ -1,7 +1,7 @@
 [package]
-name = "ldhongen1990/firebase"
-description = "Forked of original project https://github.com/raphtalia/FirebaseLuau to fix wally errors. My forked repo is over here: https://github.com/ldhongen1990/FirebaseLuau"  
-version = "1.0.0"
+name = "raphtalia/firebase"
+description = "Roblox Firebase API - https://github.com/raphtalia/FirebaseLuau"
+version = "1.0.7"
 license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "server"
